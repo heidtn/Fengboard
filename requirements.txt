@@ -1,0 +1,10 @@
+# Baofeng Panel dependencies (Linux; needs PulseAudio or PipeWire with pipewire-pulse)
+# Install with: pip install -r requirements.txt
+
+PySide6>=6.5
+pulsectl>=24.0
+pyserial>=3.5
+
+# CHIRP radio programming library, installed from its GitHub repo.
+# Do NOT use the "chirp" package on PyPI; it is an unrelated bioacoustics tool.
+chirp @ git+https://github.com/kk7ds/chirp.git
