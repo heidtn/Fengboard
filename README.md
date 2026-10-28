@@ -12,10 +12,9 @@ A small PySide6 desktop panel for a Baofeng HT connected through an AIOC cable (
 ## Install
 
 ```bash
-pip install PySide6 pulsectl pyserial
-pip install "git+https://github.com/kk7ds/chirp.git"   # radio CHIRP; the PyPI "chirp" package is unrelated
-sudo usermod -aG dialout $USER                         # serial access; log out and back in
-python3 baofeng_panel.py
+pip install -e .
+sudo usermod -aG dialout $USER   # serial access; log out and back in
+python3 -m Fengboard             # or: baofeng-panel
 ```
 
 Requires PulseAudio, or PipeWire with `pipewire-pulse` (standard on current desktop distros).

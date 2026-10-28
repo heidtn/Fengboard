@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "Fengboard"
+version = "0.1.0"
+description = "A small desktop control panel for a Baofeng HT on an AIOC cable"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+dependencies = [
+    "PySide6>=6.5",
+    "pulsectl>=24.0",
+    "pyserial>=3.5",
+    "chirp @ git+https://github.com/kk7ds/chirp.git",
+]
+
+[project.scripts]
+baofeng-panel = "Fengboard.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["Fengboard*"]
