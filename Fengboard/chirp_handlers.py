@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import builtins
 import traceback
+import logging
 
 # CHIRP's drivers call a global gettext function "_" that its own GUI installs.
 if not hasattr(builtins, "_"):
@@ -22,6 +23,10 @@ try:
 except Exception:  # noqa: BLE001
     CHIRP_OK = False
 
+# Chirp uses a custom class with a log function, we're faking it here
+class ChirpSerial(serial.Serial):
+    def log(self, message):
+        logging.getLogger("baofeng_panel.serial").debug(message)
 
 class CloneWorker(QObject):
     progress = Signal(int, int, str)
@@ -38,7 +43,7 @@ class CloneWorker(QObject):
         ser = None
         try:
             cls = type(self.radio) if self.upload else self.radio_cls
-            ser = serial.Serial()
+            ser = ChirpSerial()
             ser.port = self.port
             ser.baudrate = getattr(cls, "BAUD_RATE", 9600)
             ser.timeout = 0.25
