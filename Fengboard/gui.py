@@ -55,9 +55,8 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(central)
         self.statusBar()
 
-        self.refresh_ports()
+        self.refresh_ports()  # also opens the PTT port
         self.refresh_audio_devices()
-        self._open_ptt_port()
         if self.audio_error:
             self.status(f"Audio unavailable: {self.audio_error}")
         if not CHIRP_OK:

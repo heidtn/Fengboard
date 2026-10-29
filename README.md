@@ -1,13 +1,16 @@
-# Baofeng Panel
+# FengBoard
 
 A small PySide6 desktop panel for a Baofeng HT connected through an AIOC cable (Linux).
 
+I've recently gotten into Ham radio and I like to have my Baofeng on just to listen 
+while I'm working on the computer. I like to have my headphones on and I don't 
+want to jump from my computer to the radio. This project let's me listen in the background
+while playing music and whatnot while also using my computer mic to speak.
+
 - **Listen** — routes the AIOC input (radio receive audio) to your headphones.
 - **Push to talk** — hold the on-screen button (or click to lock it on in toggle mode).
-  Your mic is routed to the AIOC output only while keyed; PTT is keyed over the AIOC
-  serial port. Adjustable TX timeout as a backstop against leaving it keyed.
 - **Channels** — download, edit, back up (save/open `.img`), and upload channel memories
-  using CHIRP's drivers. Defaults to the BF-F8HP-PRO driver.
+  using CHIRP's drivers.
 
 ## Install
 
@@ -36,3 +39,19 @@ Requires PulseAudio, or PipeWire with `pipewire-pulse` (standard on current desk
 - PTT is only triggered by the on-screen button — there is no keyboard hotkey, to
   avoid accidentally keying the radio.
 - PTT assumes the AIOC's default firmware mapping (DTR=1, RTS=0 keys the radio).
+
+
+## AI Disclaimer
+This project was pretty heavily AI assisted (probably 90% AI). I've gone through all 
+the code and there are a few areas where things are a bit messy and not architected well, 
+but it's entirely functional and I haven't found any major issues to be worried about (yet).
+
+## Status, Future Work, and Contributing
+I've only tested on my BF-F8HP Pro, but everything seems to be in working order so far.
+
+I think at this stage it does everything I want it to so I don't think I'll be adding additional
+features, just maintaining and fixing bugs. I've considered adding digital modes however to make this
+a sort of all in one tool, maybe riding off of [Pat](https://getpat.io/) but tbd.
+
+Feel free to fork or submit a PR if you think you have something interesting, though I'd like to 
+keep the scope minimal so I may not accept it if it's a substantial feature.

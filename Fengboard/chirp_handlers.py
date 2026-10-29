@@ -4,7 +4,6 @@ channel-table model/delegate used to display and edit the result.
 from __future__ import annotations
 
 import builtins
-import traceback
 import logging
 
 # CHIRP's drivers call a global gettext function "_" that its own GUI installs.
@@ -23,10 +22,13 @@ try:
 except Exception:  # noqa: BLE001
     CHIRP_OK = False
 
+logger = logging.getLogger(__name__)
+
+
 # Chirp uses a custom class with a log function, we're faking it here
 class ChirpSerial(serial.Serial):
     def log(self, message):
-        logging.getLogger("baofeng_panel.serial").debug(message)
+        logger.debug(message)
 
 class CloneWorker(QObject):
     progress = Signal(int, int, str)
@@ -62,7 +64,7 @@ class CloneWorker(QObject):
             radio.pipe = None
             self.finished.emit(radio, "")
         except Exception as e:  # noqa: BLE001
-            traceback.print_exc()
+            logger.exception("Clone failed")
             self.finished.emit(None, str(e) or type(e).__name__)
         finally:
             if ser is not None:
