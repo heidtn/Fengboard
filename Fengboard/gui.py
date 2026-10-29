@@ -3,13 +3,12 @@ from __future__ import annotations
 
 import time
 
-from PySide6.QtCore import QEvent, QSettings, Qt, QThread, QTimer, Signal
-from PySide6.QtGui import QFont, QKeySequence
-from PySide6.QtWidgets import (QAbstractItemView, QApplication, QCheckBox,
+from PySide6.QtCore import QSettings, Qt, QThread, QTimer, Signal
+from PySide6.QtGui import QFont
+from PySide6.QtWidgets import (QAbstractItemView, QCheckBox,
                                QComboBox, QFileDialog, QFormLayout,
                                QGroupBox, QHBoxLayout, QHeaderView,
-                               QKeySequenceEdit, QLabel, QLineEdit,
-                               QMainWindow, QMessageBox, QProgressBar,
+                               QLabel, QMainWindow, QMessageBox, QProgressBar,
                                QPushButton, QSpinBox, QTableView,
                                QTabWidget, QVBoxLayout, QWidget)
 
@@ -17,8 +16,6 @@ from .audio import AudioRouter, PTTPort, list_serial_ports
 from .chirp_handlers import (CHIRP_OK, COLUMNS, ChannelModel, CloneWorker,
                              ComboDelegate, chirp_directory)
 from .constants import APP_NAME, DEFAULT_MODEL
-
-TEXT_INPUT_TYPES = (QLineEdit, QKeySequenceEdit, QSpinBox, QComboBox)
 
 
 class MainWindow(QMainWindow):
@@ -60,7 +57,6 @@ class MainWindow(QMainWindow):
 
         self.refresh_ports()
         self.refresh_audio_devices()
-        self._update_hotkey_label()
         self._open_ptt_port()
         if self.audio_error:
             self.status(f"Audio unavailable: {self.audio_error}")
@@ -68,7 +64,6 @@ class MainWindow(QMainWindow):
             self.status("CHIRP not found; channel editing disabled. "
                         "Install it from github.com/kk7ds/chirp.")
 
-        QApplication.instance().installEventFilter(self)
         self.resize(1000, 640)
 
     # ---------------------------------------------------------- UI builders
@@ -160,14 +155,6 @@ class MainWindow(QMainWindow):
         self.toggle_mode.toggled.connect(lambda s: self.settings.setValue("toggle_mode", s))
         opts.addWidget(self.toggle_mode)
         opts.addStretch(1)
-        opts.addWidget(QLabel("Hotkey:"))
-        self.hotkey_edit = QKeySequenceEdit(
-            QKeySequence(self.settings.value("hotkey", "Space")))
-        self.hotkey_edit.setMaximumSequenceLength(1)
-        self.hotkey_edit.setMaximumWidth(120)
-        self.hotkey_edit.editingFinished.connect(self._hotkey_changed)
-        opts.addWidget(self.hotkey_edit)
-        opts.addSpacing(12)
         opts.addWidget(QLabel("TX timeout (s):"))
         self.timeout_spin = QSpinBox()
         self.timeout_spin.setRange(10, 600)
@@ -175,9 +162,6 @@ class MainWindow(QMainWindow):
         self.timeout_spin.valueChanged.connect(lambda s: self.settings.setValue("tx_timeout", s))
         opts.addWidget(self.timeout_spin)
         tv.addLayout(opts)
-        self.hotkey_label = QLabel()
-        self.hotkey_label.setStyleSheet("color: gray;")
-        tv.addWidget(self.hotkey_label)
         v.addWidget(txbox)
         v.addStretch(1)
         return w
@@ -429,48 +413,6 @@ class MainWindow(QMainWindow):
     def _ptt_btn_released(self):
         if not self.toggle_mode.isChecked():
             self.stop_tx()
-
-    def _hotkey(self):
-        seq = self.hotkey_edit.keySequence()
-        if seq.isEmpty():
-            return None
-        return seq[0].key()
-
-    def _hotkey_changed(self):
-        self.settings.setValue("hotkey", self.hotkey_edit.keySequence().toString())
-        self._update_hotkey_label()
-        self.ptt_btn.setFocus()
-
-    def _update_hotkey_label(self):
-        k = self.hotkey_edit.keySequence().toString() or "(none)"
-        self.hotkey_label.setText(
-            f"Hold {k} to transmit while this window is focused "
-            "(ignored while typing in a text field or editing the channel table).")
-
-    def eventFilter(self, obj, event):  # noqa: N802
-        et = event.type()
-        if et in (QEvent.KeyPress, QEvent.KeyRelease):
-            key = self._hotkey()
-            if key is not None and event.key() == key and self.isActiveWindow():
-                focus = QApplication.focusWidget()
-                typing = isinstance(focus, TEXT_INPUT_TYPES) or (
-                    self.table.state() == QAbstractItemView.EditingState)
-                if not typing:
-                    if event.isAutoRepeat():
-                        return True
-                    if et == QEvent.KeyPress:
-                        if self.toggle_mode.isChecked() and self.transmitting:
-                            self.stop_tx()
-                        else:
-                            self.start_tx()
-                    elif not self.toggle_mode.isChecked():
-                        self.stop_tx()
-                    return True
-        elif et == QEvent.ApplicationDeactivate and self.transmitting \
-                and not self.toggle_mode.isChecked():
-            # releasing a held key in another window would never reach us
-            self.stop_tx("Window lost focus - unkeyed.")
-        return super().eventFilter(obj, event)
 
     # ---------------------------------------------------------- channels
     def _mark_dirty(self):

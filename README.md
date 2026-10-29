@@ -3,9 +3,9 @@
 A small PySide6 desktop panel for a Baofeng HT connected through an AIOC cable (Linux).
 
 - **Listen** — routes the AIOC input (radio receive audio) to your headphones.
-- **Push to talk** — hold the on-screen button or a hotkey (default Space). Your mic is
-  routed to the AIOC output only while keyed; PTT is keyed over the AIOC serial port.
-  Toggle mode, adjustable TX timeout, and automatic unkey if the window loses focus.
+- **Push to talk** — hold the on-screen button (or click to lock it on in toggle mode).
+  Your mic is routed to the AIOC output only while keyed; PTT is keyed over the AIOC
+  serial port. Adjustable TX timeout as a backstop against leaving it keyed.
 - **Channels** — download, edit, back up (save/open `.img`), and upload channel memories
   using CHIRP's drivers. Defaults to the BF-F8HP-PRO driver.
 
@@ -33,5 +33,6 @@ Requires PulseAudio, or PipeWire with `pipewire-pulse` (standard on current desk
 - Channel changes are written by a full clone upload; the radio restarts afterward.
   The UV-5R family has no live CAT control, so channel/squelch changes can't be instant.
 - PTT and programming share the serial port; transmit is disabled while programming.
-- The hotkey only works while the window is focused and you aren't typing in a field.
+- PTT is only triggered by the on-screen button — there is no keyboard hotkey, to
+  avoid accidentally keying the radio.
 - PTT assumes the AIOC's default firmware mapping (DTR=1, RTS=0 keys the radio).
