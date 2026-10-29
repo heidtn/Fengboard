@@ -2,10 +2,10 @@
 
 A small PySide6 desktop panel for a Baofeng HT connected through an AIOC cable (Linux).
 
-I've recently gotten into Ham radio and I like to have my Baofeng on just to listen 
-while I'm working on the computer. I like to have my headphones on and I don't 
-want to jump from my computer to the radio. This project let's me listen in the background
-while playing music and whatnot while also using my computer mic to speak.
+I've recently gotten into Ham radio and I like to have my Baofeng on just to listen.
+I wanted a way to listen and speak on my radio through my computer. That way I could
+use my PC headphones and mic *and* I can listen to music or other things while the channel 
+is quiet. This app lets me do just that. I also added a CHIRP interface just for ease of access.
 
 - **Listen** — routes the AIOC input (radio receive audio) to your headphones.
 - **Push to talk** — hold the on-screen button (or click to lock it on in toggle mode).
